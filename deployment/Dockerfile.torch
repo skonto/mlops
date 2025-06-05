@@ -1,0 +1,44 @@
+# Dockerfile: Python 3.13 + PyTorch 2.7.0 (CUDA 12.8)
+#FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
+FROM nvidia/cuda:12.8.0-base-ubuntu22.04
+
+# Avoid interactive apt prompts and set up environment locale
+ENV DEBIAN_FRONTEND=noninteractive 
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PYTHONUNBUFFERED=1
+
+# Install Python 3.13 from deadsnakes PPA and get pip
+RUN apt-get update && apt-get install -y software-properties-common curl \
+ && add-apt-repository ppa:deadsnakes/ppa \
+ && apt-get update && apt-get install -y python3.13 python3.13-venv \
+ && curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13 \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install uv (Python dependency manager) and PyTorch 2.7.0 (CUDA 12.8) 
+ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+RUN python3.13 -m pip install uv
+WORKDIR /app
+# Copy pyproject and lockfile, then install project dependencies
+COPY pyproject.toml uv.lock ./
+# Copy application code
+COPY . . 
+RUN uv sync --frozen --no-dev --no-editable --no-cache
+
+# Set NVIDIA CUDA requirement (ensures proper driver on host)
+ENV NVIDIA_REQUIRE_CUDA="cuda>=12.8"
+
+# Expose app port
+EXPOSE 8000
+ENV VIRTUAL_ENV=/app/.venv
+ENV PATH=/app/.venv/bin:${PATH}
+
+# Optional: remove debug symbols and headers
+RUN find $VIRTUAL_ENV -type d -name '__pycache__' -exec rm -rf {} + && \
+    find $VIRTUAL_ENV -name '*.pyc' -delete && \
+    rm -rf $VIRTUAL_ENV/lib/python3.13/site-packages/*/tests && \
+    rm -rf $VIRTUAL_ENV/lib/python3.13/site-packages/*.dist-info && \
+    rm -rf $VIRTUAL_ENV/lib/python3.13/site-packages/torch/include && \
+    rm -rf $VIRTUAL_ENV/lib/python3.13/site-packages/torch/lib/*.debug
+
+# Start FastAPI app
+CMD ["uvicorn", "app.torch:app", "--host", "0.0.0.0", "--port", "8000"]

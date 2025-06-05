@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def load_trained_model(model_path="model.pth"):
+def load_trained_model(model_path="model.pt"):
     iris = load_iris()
     X, y = iris.data, iris.target
     median = np.median(X, axis=0)
@@ -31,7 +31,7 @@ def load_trained_model(model_path="model.pth"):
 
 
 def test_onnx_export_consistency():
-    model, X, y = load_trained_model("model.pth")
+    model, X, y = load_trained_model("model.pt")
 
     x_numpy = np.array([X[0]], dtype=np.float32)
     x_tensor = torch.from_numpy(x_numpy).to(device)

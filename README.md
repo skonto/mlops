@@ -33,10 +33,17 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 ```
 
+
 ```docker run --gpus all -p8000:8000 fastapi-inference-onnx
 INFO:     Started server process [1]
 INFO:     Waiting for application startup.
 ✅ Model and inference engine ready
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
+
+Make predictions:
+```
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json"   -d '{"features": [[52.1, 32.4, 22, 1]]}'
+{"predictions":[1]}
 ```
