@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from data import BatchInput
-from inference import ONNXInferenceEngine
+from inference_onnx import ONNXInferenceEngine
 from contextlib import asynccontextmanager
 from pynvml import *
 

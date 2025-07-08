@@ -6,7 +6,6 @@ from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from models import IrisDL
-import onnxruntime as ort
 import random
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -78,6 +77,9 @@ def train_and_export_model():
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.savefig("loss_plot.png")
+    
+    # Compile with torch.compile() (only works PyTorch 2.0+)
+    compiled_model = torch.compile(model)
 
     model.eval()
     X_test_tensor = torch.tensor(X_test, dtype=torch.float32).to(device)
@@ -99,6 +101,10 @@ def train_and_export_model():
         output_names=["output"],
         dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}
     )
+
+    # Save the compiled model to disk
+    torch.save(compiled_model, "compiled_model.pt")
+
 
     return model, X, y
 

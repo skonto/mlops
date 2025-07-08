@@ -1,6 +1,5 @@
 # Dockerfile: Python 3.13 + PyTorch 2.7.0 (CUDA 12.8)
-#FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
-FROM nvidia/cuda:12.8.0-base-ubuntu22.04
+FROM nvidia/cuda:12.8.0-cudnn-runtime-ubuntu22.04
 
 # Avoid interactive apt prompts and set up environment locale
 ENV DEBIAN_FRONTEND=noninteractive 
@@ -21,8 +20,12 @@ WORKDIR /app
 # Copy pyproject and lockfile, then install project dependencies
 COPY pyproject.toml uv.lock ./
 # Copy application code
-COPY . . 
-RUN uv sync --frozen --no-dev --no-editable --no-cache
+COPY ./app/onnx/onnx.py ./app/onnx.py
+COPY ./src/inference_onnx ./src/inference_onnx 
+COPY ./src/models ./src/models
+COPY ./src/data ./src/data
+COPY ./model.onnx  ./model.onnx
+RUN uv sync --frozen --no-dev --no-editable --no-cache --extra onnx --no-extra torch --no-extra train
 
 # Set NVIDIA CUDA requirement (ensures proper driver on host)
 ENV NVIDIA_REQUIRE_CUDA="cuda>=12.8"

@@ -1,5 +1,4 @@
 # Dockerfile: Python 3.13 + PyTorch 2.7.0 (CUDA 12.8)
-#FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
 FROM nvidia/cuda:12.8.0-base-ubuntu22.04
 
 # Avoid interactive apt prompts and set up environment locale
@@ -20,9 +19,14 @@ RUN python3.13 -m pip install uv
 WORKDIR /app
 # Copy pyproject and lockfile, then install project dependencies
 COPY pyproject.toml uv.lock ./
+
 # Copy application code
-COPY . . 
-RUN uv sync --frozen --no-dev --no-editable --no-cache
+COPY ./app/torch/torch.py ./app/torch.py
+COPY ./src/inference_torch ./src/inference_torch 
+COPY ./src/models ./src/models
+COPY ./src/data ./src/data
+COPY ./compiled_model.pt ./compiled_model.pt
+RUN uv sync --frozen --no-dev --no-editable --no-cache --no-extra onnx --no-extra train
 
 # Set NVIDIA CUDA requirement (ensures proper driver on host)
 ENV NVIDIA_REQUIRE_CUDA="cuda>=12.8"

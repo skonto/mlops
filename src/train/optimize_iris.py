@@ -5,7 +5,6 @@ from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
-import numpy as np
 import matplotlib.pyplot as plt
 
 # Full IrisDL implementation with tunable architecture

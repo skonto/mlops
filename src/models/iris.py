@@ -1,11 +1,8 @@
-import torch
 import torch.nn as nn
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
-import numpy as np
-import onnxruntime as ort
 
 class IrisDL(nn.Module):
     def __init__(

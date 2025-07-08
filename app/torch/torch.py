@@ -3,7 +3,7 @@ import torch
 from typing import List
 from models import IrisDL
 from data import BatchInput
-from inference import InferenceEngine
+from inference_torch import TorchInferenceEngine
 from contextlib import asynccontextmanager
 import threading
 import time
@@ -69,9 +69,9 @@ async def lifespan(app: FastAPI):
     iqr= dummy,
     activation=best_params["activation"],
     dropout=best_params["dropout"])
-
-    model.load_state_dict(torch.load("model.pt", map_location=device))
-    engine = InferenceEngine(model=model, device=device, num_threads=4)
+    torch.set_float32_matmul_precision('high')
+    torch.load("compiled_model.pt", map_location=device, weights_only=False)
+    engine = TorchInferenceEngine(model=model, device=device, num_threads=4)
     print("✅ Model and inference engine ready")
     
     yield
