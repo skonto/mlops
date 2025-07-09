@@ -1,12 +1,18 @@
 # MLOPS
 Examples of ML lifecycle
 
+## Train a model
+
+Here we train a NN for the Iris dataset. Optuna is used to find the optimal architecture and then the trained model
+is exported to different formats. For the torch model we compile as we expect it to run on the same card locally.
+
+
 ## Build the container for the model
 
 Here we build one container per exported type for the same model.
 
 ```
-docker build -f deployment/Dockerfile.torch -t fastapi-inference .
+docker build -f deployment/Dockerfile.torch -t fastapi-inference-torch .
 
 docker build -f deployment/Dockerfile.onnx -t fastapi-inference-onnx .
 
@@ -47,3 +53,38 @@ Make predictions:
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json"   -d '{"features": [[52.1, 32.4, 22, 1]]}'
 {"predictions":[1]}
 ```
+
+# Deploying with Triton Server
+
+Triton supports multiple formats. Here we will deploy the onnx model.
+
+```
+docker run --rm --gpus all   -p8000:8000 -p8001:8001 -p8002:8002   -v $PWD/model_repository:/models   nvcr.io/nvidia/tritonserver:25.06-py3   tritonserver --model-repository=/models
+...
+I0708 15:56:37.437140 1 grpc_server.cc:2562] "Started GRPCInferenceService at 0.0.0.0:8001"
+I0708 15:56:37.437510 1 http_server.cc:4832] "Started HTTPService at 0.0.0.0:8000"
+I0708 15:56:37.478611 1 http_server.cc:358] "Started Metrics Service at 0.0.0.0:8002"
+...
+
+curl -X POST http://localhost:8000/v2/models/iris/infer -H "Content-Type: application/json"   -H "Accept: application/json"   --data-binary @- <<EOF
+{
+  "inputs": [
+    {
+      "name": "input",
+      "shape": [1, 4],
+      "datatype": "FP32",
+      "data": [[52.1, 32.4, 22, 1]]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output"
+    }
+  ]
+}
+EOF
+{"model_name":"iris","model_version":"1","outputs":[{"name":"output","datatype":"FP32","shape":[1,3],"data":[-127.28438568115235,188.3376007080078,-269.2401428222656]}]}
+
+```
+
+Here there is no argmax logic but it could be added to the model.

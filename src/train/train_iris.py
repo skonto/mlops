@@ -78,9 +78,6 @@ def train_and_export_model():
     plt.ylabel("Loss")
     plt.savefig("loss_plot.png")
     
-    # Compile with torch.compile() (only works PyTorch 2.0+)
-    compiled_model = torch.compile(model)
-
     model.eval()
     X_test_tensor = torch.tensor(X_test, dtype=torch.float32).to(device)
     y_pred_test = model(X_test_tensor)
@@ -101,10 +98,6 @@ def train_and_export_model():
         output_names=["output"],
         dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}
     )
-
-    # Save the compiled model to disk
-    torch.save(compiled_model, "compiled_model.pt")
-
 
     return model, X, y
 

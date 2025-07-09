@@ -17,3 +17,13 @@ app = FastAPI(lifespan=lifespan)
 @app.post("/predict")
 async def predict(data: BatchInput):
     return await engine.predict_async(data.features)
+
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
+
+@app.get("/ready")
+def readiness_check():
+    if engine is not None:
+        return {"ready": True}
+    return {"ready": False}

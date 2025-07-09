@@ -1,8 +1,5 @@
 import torch.nn as nn
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, confusion_matrix
+import torch
 
 class IrisDL(nn.Module):
     def __init__(
@@ -38,3 +35,15 @@ class IrisDL(nn.Module):
         x = (x - self.median) / (self.iqr + 1e-6)
         return self.net(x)
 
+    @classmethod
+    def from_checkpoint(cls, path: str, config: dict, device: torch.device, compile_model: bool = False):
+        model = cls(**config)
+        state_dict = torch.load(path, map_location=device)
+        model.load_state_dict(state_dict)
+        model.to(device)
+        model.eval()
+
+        if compile_model:
+            model = torch.compile(model)
+
+        return model

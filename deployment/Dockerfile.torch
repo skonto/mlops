@@ -17,16 +17,24 @@ RUN apt-get update && apt-get install -y software-properties-common curl \
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN python3.13 -m pip install uv
 WORKDIR /app
+
 # Copy pyproject and lockfile, then install project dependencies
 COPY pyproject.toml uv.lock ./
+RUN mkdir src && touch README.md
 
-# Copy application code
+# Sync dependencies (torch only) using uv
+RUN uv sync --frozen --no-editable --no-cache --extra torch
+
+# Copy actual source code and model (this layer changes more often)
 COPY ./app/torch/torch.py ./app/torch.py
 COPY ./src/inference_torch ./src/inference_torch 
 COPY ./src/models ./src/models
 COPY ./src/data ./src/data
-COPY ./compiled_model.pt ./compiled_model.pt
-RUN uv sync --frozen --no-dev --no-editable --no-cache --no-extra onnx --no-extra train
+COPY ./src/utils ./src/utils
+COPY ./model.pt ./model.pt
+
+# Re-sync project with editable install (now code is present)
+RUN uv sync --no-editable --no-cache --frozen --extra torch
 
 # Set NVIDIA CUDA requirement (ensures proper driver on host)
 ENV NVIDIA_REQUIRE_CUDA="cuda>=12.8"

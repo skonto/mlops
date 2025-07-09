@@ -19,6 +19,10 @@ RUN python3.13 -m pip install uv
 WORKDIR /app
 # Copy pyproject and lockfile, then install project dependencies
 COPY pyproject.toml uv.lock ./
+RUN mkdir src && touch README.md
+
+RUN uv sync --frozen --no-dev --no-editable --no-cache --extra onnx --no-extra torch --no-extra train
+
 # Copy application code
 COPY ./app/onnx/onnx.py ./app/onnx.py
 COPY ./src/inference_onnx ./src/inference_onnx 
