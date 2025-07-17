@@ -5,8 +5,7 @@ import asyncio
 from typing import List, Dict, Any
 
 class ONNXInferenceEngine:
-    def __init__(self, onnx_path: str, num_threads: int = 4):
-        providers = ["CUDAExecutionProvider"] if "CUDAExecutionProvider" in ort.get_available_providers() else ["CPUExecutionProvider"]
+    def __init__(self, onnx_path: str, providers: List[str], num_threads: int = 4):
         self.session = ort.InferenceSession(onnx_path, providers=providers)
         self.input_name = self.session.get_inputs()[0].name
         self.output_name = self.session.get_outputs()[0].name

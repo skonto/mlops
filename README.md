@@ -6,7 +6,6 @@ Examples of ML lifecycle
 Here we train a NN for the Iris dataset. Optuna is used to find the optimal architecture and then the trained model
 is exported to different formats. For the torch model we compile as we expect it to run on the same card locally.
 
-
 ## Build the container for the model
 
 Here we build one container per exported type for the same model.
@@ -24,28 +23,35 @@ Here we run on gpu the corresponding containers. The custom infernece for the to
 prints gpu allocations.
 
 ```
-docker run --gpus all -p8000:8000 fastapi-inference
-CUDA available: True
-CUDA device count: 1
-Current device: 0
-Device name: NVIDIA GeForce RTX 4060 Laptop GPU
+docker run --gpus all -p8000:8000 fastapi-inference-torch
 INFO:     Started server process [1]
 INFO:     Waiting for application startup.
-✅ Starting GPU memory monitor...
-[GPU] Allocated: 0.00 MB
-[GPU] Reserved: 0.00 MB
 INFO:     Application startup complete.
-✅ Model and inference engine ready
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 ```
 
 
 ```docker run --gpus all -p8000:8000 fastapi-inference-onnx
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 12.8.0
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
 INFO:     Started server process [1]
 INFO:     Waiting for application startup.
-✅ Model and inference engine ready
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+
 ```
 
 Make predictions:

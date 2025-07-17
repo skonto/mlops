@@ -7,31 +7,26 @@ from contextlib import asynccontextmanager
 from pynvml import *
 from fastapi import FastAPI, Depends, HTTPException, Request
 from utils import start_gpu_monitor, stop_gpu_monitor, report_actual_gpu_memory
-
-config = {
-    "input_dim": 4,
-    "hidden_dims": [16, 128, 32, 64],
-    "output_dim": 3,
-    "median": torch.zeros(4),
-    "iqr": torch.ones(4),
-    "activation": "relu",
-    "dropout": 0.1956,
-}
+from loguru import logger
+import app.torch.app_config as app_config
+from log_config import setup_logging
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global engine
-    global device 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    torch.set_float32_matmul_precision('high')
-    model = IrisDL.from_checkpoint("model.pt", config, device)
-    engine = TorchInferenceEngine(model=model, device=device, num_threads=4)
+    global device
+    device = app_config.config.engine.torch_device
+    app_config.config.engine.apply_runtime_settings()
+    model = IrisDL.from_checkpoint("model.pt", app_config.config.model.to_model_dict(), device)
+    engine = TorchInferenceEngine(model=model, device=device, num_threads=app_config.config.engine.num_threads)
     start_gpu_monitor(device = device)
-    print("✅ Model and inference engine ready")
+    logger.info("Model and inference engine ready")
+
     yield
     engine = None
     stop_gpu_monitor()
-    
+
+setup_logging(**app_config.config.logging.model_dump())
 app = FastAPI(lifespan=lifespan)
 
 @app.post("/predict")
@@ -52,13 +47,13 @@ def require_localhost(request: Request) -> Request:
     client_host = request.client.host
     if client_host not in ("127.0.0.1", "::1"):
         raise HTTPException(status_code=403, detail=f"Access denied: not localhost ({client_host})")
-    return request  # you can return the request if the handler needs it
+    return request
 
 @app.get("/debug/gpu", include_in_schema=False, dependencies=[Depends(require_localhost)])
 async def get_gpu_memory(request: Request):
-    print("CUDA available:", torch.cuda.is_available())
-    print("CUDA device count:", torch.cuda.device_count())
-    print("Current device:", torch.cuda.current_device())
-    print("Device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
+    logger.info("CUDA available:", torch.cuda.is_available())
+    logger.info("CUDA device count:", torch.cuda.device_count())
+    logger.info("Current device:", torch.cuda.current_device())
+    logger.info("Device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
     report_actual_gpu_memory(device=device)
     return {"status": "checked"}

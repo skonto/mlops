@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 import torch
 import onnxruntime as ort
 from models import IrisDL

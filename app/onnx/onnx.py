@@ -3,15 +3,19 @@ from data import BatchInput
 from inference_onnx import ONNXInferenceEngine
 from contextlib import asynccontextmanager
 from pynvml import *
+from loguru import logger
+from log_config import setup_logging
+import app.onnx.app_config as app_config
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global engine
-    engine = ONNXInferenceEngine("model.onnx")
-    print("✅ Model and inference engine ready")
+    engine = ONNXInferenceEngine(onnx_path="model.onnx", providers=app_config.config.engine.providers, num_threads=app_config.config.engine.num_threads)
+    logger.info("Model and inference engine ready")
     yield
     engine = None
 
+setup_logging(**app_config.config.logging.model_dump())
 app = FastAPI(lifespan=lifespan)
 
 @app.post("/predict")

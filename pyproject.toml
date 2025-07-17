@@ -10,10 +10,20 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.115.12",
+    "loguru>=0.7.3",
     "numpy>=2.2.6",
     "pydantic>=2.11.5",
+    "pydantic-settings>=2.10.1",
+    "pylint>=3.3.7",
     "pynvml>=12.0.0",
     "uvicorn>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "pylint>=3.3.3",
+    "pytest>=8.3.5",
+    "ruff>=0.11.13",
 ]
 
 [project.optional-dependencies]
@@ -40,3 +50,8 @@ package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 88
+lint.select = ["I"]
+fix = true

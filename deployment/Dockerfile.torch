@@ -26,10 +26,11 @@ RUN mkdir src && touch README.md
 RUN uv sync --frozen --no-editable --no-cache --extra torch
 
 # Copy actual source code and model (this layer changes more often)
-COPY ./app/torch/torch.py ./app/torch.py
+COPY ./app/torch ./app/torch
 COPY ./src/inference_torch ./src/inference_torch 
 COPY ./src/models ./src/models
 COPY ./src/data ./src/data
+COPY ./src/log_config ./src/log_config
 COPY ./src/utils ./src/utils
 COPY ./model.pt ./model.pt
 
@@ -53,4 +54,4 @@ RUN find $VIRTUAL_ENV -type d -name '__pycache__' -exec rm -rf {} + && \
     rm -rf $VIRTUAL_ENV/lib/python3.13/site-packages/torch/lib/*.debug
 
 # Start FastAPI app
-CMD ["uvicorn", "app.torch:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.torch.torch:app", "--host", "0.0.0.0", "--port", "8000"]
