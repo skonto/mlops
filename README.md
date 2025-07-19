@@ -65,7 +65,7 @@ curl -X POST http://localhost:8000/predict -H "Content-Type: application/json"  
 Triton supports multiple formats. Here we will deploy the onnx model.
 
 ```
-docker run --rm --gpus all   -p8000:8000 -p8001:8001 -p8002:8002   -v $PWD/model_repository:/models   nvcr.io/nvidia/tritonserver:25.06-py3   tritonserver --model-repository=/models
+docker run --rm --gpus all -p8000:8000 -p8001:8001 -p8002:8002   -v $PWD/model_repository:/models   nvcr.io/nvidia/tritonserver:25.06-py3   tritonserver --model-repository=/models
 ...
 I0708 15:56:37.437140 1 grpc_server.cc:2562] "Started GRPCInferenceService at 0.0.0.0:8001"
 I0708 15:56:37.437510 1 http_server.cc:4832] "Started HTTPService at 0.0.0.0:8000"

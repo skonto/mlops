@@ -33,8 +33,8 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def train_and_export_model():
-    set_seed(100)
+def train(seed = 100, train_size = 0.8, num_epochs = 1000):
+    set_seed(seed)
     iris = load_iris()
     X, y = iris.data, iris.target
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8)
@@ -60,7 +60,7 @@ def train_and_export_model():
 
     loss_history = []
     model.train()
-    for epoch in range(1000):
+    for epoch in range(num_epochs):
         optimizer.zero_grad()
         y_pred = model(X_train_tensor)
         loss = loss_fn(y_pred, y_train_tensor)
@@ -85,7 +85,11 @@ def train_and_export_model():
 
     print("Test Accuracy:", accuracy_score(preds, y_test))
     print("Confusion Matrix:\n", confusion_matrix(preds, y_test))
+    return model, X, y
 
+def train_and_export_model():
+    model, X, y = train()
+    model.eval()
     torch.save(model.state_dict(), "model.pt")
 
     model.eval()
@@ -93,10 +97,11 @@ def train_and_export_model():
     torch.onnx.export(
         model, dummy_input, "model.onnx",
         export_params=True,
+        verbose=True,
         opset_version=17,
         input_names=["input"],
         output_names=["output"],
-        dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}}
+        dynamic_axes={"input": {0: "batch_size"}, "output": {0: "batch_size"}},
     )
 
     return model, X, y

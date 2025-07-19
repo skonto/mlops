@@ -21,17 +21,22 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "mlflow>=3.1.1",
+    "ipykernel>=6.29.5",
     "pylint>=3.3.3",
     "pytest>=8.3.5",
     "ruff>=0.11.13",
+    "numpy>=2.3.1",
+    "pandas>=2.3.1",
+    "matplotlib>=3.10.3",
+    "seaborn>=0.13.2",
+    "scikit-learn>=1.7.0",
+    "catboost>=1.2.8",
+    "optuna>=4.4.0",
+    "torch>=2.7.1",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "mypy>=1.16.0",
-    "pytest>=8.4.0",
-    "pytest-cov>=6.1.1",
-]
 onnx = [
     "onnx==1.18.0",
     "onnxruntime-gpu>=1.20.0",

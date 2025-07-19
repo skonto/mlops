@@ -5,7 +5,7 @@ from loguru import logger
 
 class EngineParams(BaseSettings):
     device: Literal["cpu", "cuda"] = "cuda"
-    num_threads: int = 4
+    num_threads: int = 8
     matmul_precision: Literal["high", "medium", "default"] = "high"
 
     @property

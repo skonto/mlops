@@ -4,7 +4,7 @@ import onnxruntime as ort
 
 class EngineParams(BaseSettings):
     device: Literal["cpu", "cuda"] = "cuda"
-    num_threads: int = 4
+    num_threads: int = 8
 
     @property
     def providers(self): 

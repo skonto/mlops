@@ -18,5 +18,5 @@ class ONNXInferenceEngine:
         return {"predictions": preds}
 
     async def predict_async(self, batch: List[List[float]]) -> Dict[str, Any]:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         return await loop.run_in_executor(self.pool, self.predict, batch)

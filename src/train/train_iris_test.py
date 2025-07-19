@@ -7,7 +7,6 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
 def load_trained_model(model_path="model.pt"):
     iris = load_iris()
     X, y = iris.data, iris.target

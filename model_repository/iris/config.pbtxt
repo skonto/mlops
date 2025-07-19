@@ -1,6 +1,7 @@
 name: "iris"
 platform: "onnxruntime_onnx"
-max_batch_size: 8
+
+max_batch_size: 100
 
 input [
   {
