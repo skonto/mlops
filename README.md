@@ -7,7 +7,7 @@ Here we train a NN for the Iris dataset. Optuna is used to find the optimal arch
 is exported to different formats. For the torch model we compile as we expect it to run on the same card locally.
 To train just run:
 
-```uv run src/train/train_iris.py"
+```uv run src/train/train_iris.py```
 
 ## Deploying with a custom inference engine
 
