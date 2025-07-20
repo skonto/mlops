@@ -1,9 +1,8 @@
 # 🌱 MLOps Examples  
 **End-to-end ML pipelines — from training to serving across multiple frameworks**
 
-![Build](https://img.shields.io/github/actions/workflow/status/skonto/mlops/ci.yml?branch=main)
 ![License](https://img.shields.io/github/license/skonto/mlops)
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Python](https://img.shields.io/badge/python-3.13%2B-blue)
 ![Docker](https://img.shields.io/badge/docker-ready-blue)
 
 ---
