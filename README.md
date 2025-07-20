@@ -7,6 +7,27 @@
 
 ---
 
+## 🎯 Project Goal & MLOps Vision
+
+This project aims to demonstrate progressive MLOps maturity, inspired by [Google’s MLOps maturity model](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning).
+
+### Key Concepts:
+- **GitHub as the source of truth**: All code, configuration, and promotion logic lives in GitHub.
+- **MLflow** is used to log experiments (see notebooks) and track metadata such as:
+  - Git commit hash
+  - Model configuration
+  - Artifacts for reproducible deployment
+- **GitHub Actions** are explored to automate the promotion of models across environments (e.g. from development to staging/production) triggered via PR merges.
+
+### Current Status:
+- 🔁 CI/CD is not yet implemented — promotion pipelines are triggered on PR merge.
+- 🧪 Not full GitOps — no state reconciliation between deployed models and registry.
+- 🕓 Continuous Training (CT) is planned — will enable pipeline re-training on fresh data periodically (e.g. on a schedule).
+- 🧩 Feature Store support is not yet implemented (optional for this use case).
+
+> 📝 A future enhancement will show how to use [KitOps](https://kitops.org/docs/get-started) to manage model promotion **without relying on a centralized model registry.**
+
+
 ## 🚀 What’s Inside
 
 Explore fully functional ML deployments of the Iris dataset via different tooling and frameworks:
@@ -38,14 +59,12 @@ Explore fully functional ML deployments of the Iris dataset via different toolin
    ```  
    Outputs:
    - `model.pt` — PyTorch weights  
-   - `compiled_model.pt` — compiled TorchScript  
    - `model.onnx` — export via ONNX  
 
 3. **Build Docker inference containers**
 
    🚀 **FastAPI + PyTorch**  
    ```bash
-   cd deployment
    docker build -f Dockerfile.torch -t fastapi-torch .
    docker run --gpus all -p 8000:8000 fastapi-torch
    ```
