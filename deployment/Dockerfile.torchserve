@@ -1,0 +1,44 @@
+# Base image with CUDA 12.8
+FROM nvidia/cuda:12.8.0-base-ubuntu22.04
+
+# Environment setup
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TS_HOME=/home/model-server
+ENV MODEL_STORE=/models
+ENV PATH=$TS_HOME/bin:$PATH
+
+
+# Install Python 3.13 from deadsnakes PPA and get pip
+RUN apt-get update && apt-get install -y software-properties-common curl openjdk-11-jdk \
+ && add-apt-repository ppa:deadsnakes/ppa \
+ && apt-get update && apt-get install -y python3.13 python3.13-venv \
+ && curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13 \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install uv (Python dependency manager) and PyTorch 2.7.0 (CUDA 12.8) 
+ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+RUN python3.13 -m pip install uv
+
+ENV VIRTUAL_ENV=/app/.venv
+ENV PATH=/app/.venv/bin:${PATH}
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+RUN mkdir src && touch README.md
+
+RUN uv sync --frozen --no-editable --no-cache --extra torch --extra torchserve
+
+# Create model store and copy .mar
+RUN mkdir -p $MODEL_STORE
+COPY torch_serve/iris.mar $MODEL_STORE/iris.mar
+COPY torch_serve/config.properties $MODEL_STORE/config.properties
+COPY src/models src/models
+RUN uv sync --frozen --no-editable --no-cache --extra torch --extra torchserve
+
+# Expose TorchServe ports
+EXPOSE 8080 8081
+COPY deployment/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+# Start TorchServe with GPU support and no config snapshotting
+CMD ["torchserve", "--model-store", "/models", "--models", "iris=iris.mar", "--disable-token-auth", "--ts-config", "/models/config.properties"]
