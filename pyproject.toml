@@ -34,6 +34,8 @@ dev = [
     "catboost>=1.2.8",
     "optuna>=4.4.0",
     "torch>=2.7.1",
+    "torch-model-archiver",
+    "nvgpu>=0.10.0",
 ]
 
 [project.optional-dependencies]
@@ -43,6 +45,10 @@ onnx = [
 ]
 torch = [
     "torch>=2.7.0",
+]
+torchserve = [
+    "torchserve",
+    "nvgpu>=0.10.0"
 ]
 train = [
     "scikit-learn>=1.6.1",

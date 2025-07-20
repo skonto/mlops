@@ -27,7 +27,7 @@ Inference Endpoint Benchmark (1000 requests):
   Max latency        : 50.61 ms
   Throughput         : 439.45 req/s
 
-$ docker run --rm --gpus all -p8000:8000 -p8001:8001 -p8002:8002   -v $PWD/model_repository:/models   nvcr.io/nvidia/tritonserver:25.06-py3   tritonserver --model-repository=/models
+$ docker run --rm --gpus all -p8000:8000 -p8001:8001 -p8002:8002   -v $PWD/triton_model_repository:/models   nvcr.io/nvidia/tritonserver:25.06-py3   tritonserver --model-repository=/models
 
 $ curl http://localhost:8000/v2/models/iris/config | jq .
 {
