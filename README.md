@@ -5,8 +5,11 @@ Examples of ML lifecycle
 
 Here we train a NN for the Iris dataset. Optuna is used to find the optimal architecture and then the trained model
 is exported to different formats. For the torch model we compile as we expect it to run on the same card locally.
+To train just run:
 
-## Build the container for the model with a custom inference engine
+```uv run src/train/train_iris.py"
+
+## Deploying with a custom inference engine
 
 Here we build one container per exported type for the same model.
 
@@ -17,7 +20,7 @@ docker build -f deployment/Dockerfile.onnx -t fastapi-inference-onnx .
 
 ```
 
-## Run the container
+### Run the container
 
 Here we run on gpu the corresponding containers. The custom infernece for the torch model also
 prints gpu allocations.
@@ -60,7 +63,7 @@ curl -X POST http://localhost:8000/predict -H "Content-Type: application/json"  
 {"predictions":[1]}
 ```
 
-# Deploying with Triton Server
+## Deploying with Triton Server
 
 Triton supports multiple formats. Here we will deploy the onnx model.
 
@@ -95,7 +98,7 @@ EOF
 
 Here there is no argmax logic but it could be added to the model.
 
-# Deploying with torchserve
+## Deploying with torchserve
 
 ```
 
