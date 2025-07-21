@@ -28,7 +28,7 @@ jobs:
         run: uv sync --dev --extra torch --extra onnx
 
       - name: Lint with Ruff
-        uses: uv run ruff check src/
+        run: uv run ruff check src/
 
       - name: Check formatting with Black
         run: uv run black --check src/
