@@ -36,6 +36,8 @@ dev = [
     "torch>=2.7.1",
     "torch-model-archiver",
     "nvgpu>=0.10.0",
+    "black>=25.1.0",
+    "mypy>=1.17.0",
 ]
 
 [project.optional-dependencies]
