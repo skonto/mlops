@@ -8,22 +8,9 @@ from sklearn.datasets import load_iris
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
 
-from models import IrisDL
+from models import IrisDL, TrainModelParams
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-best_params = {
-    "n_layers": 4,
-    "hidden_dim_0": 16,
-    "hidden_dim_1": 128,
-    "hidden_dim_2": 32,
-    "hidden_dim_3": 64,
-    "activation": "relu",
-    "dropout": 0.1956,
-    "lr": 0.0073,
-}
-
-hidden_dims = [best_params[f"hidden_dim_{i}"] for i in range(best_params["n_layers"])]
 
 
 def set_seed(seed=42):
@@ -32,12 +19,11 @@ def set_seed(seed=42):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
 
-def train(seed=100, train_size=0.8, num_epochs=1000):
+def train(seed=100, train_size=0.8, num_epochs=1000, train_params=TrainModelParams()):
     set_seed(seed)
     iris = load_iris()
     X, y = iris.data, iris.target
@@ -46,18 +32,12 @@ def train(seed=100, train_size=0.8, num_epochs=1000):
     median = np.median(X_train, axis=0)
     iqr = np.percentile(X_train, 75, axis=0) - np.percentile(X_train, 25, axis=0)
 
-    model = IrisDL(
-        input_dim=4,
-        hidden_dims=hidden_dims,
-        output_dim=3,
-        median=torch.tensor(median, dtype=torch.float32),
-        iqr=torch.tensor(iqr, dtype=torch.float32),
-        activation=best_params["activation"],
-        dropout=best_params["dropout"],
-    ).to(device)
+    model_params_dict = train_params.model.to_model_dict()
+    train_params_dict = train_params.to_model_dict()
+    model = IrisDL(**model_params_dict).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=best_params["lr"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=train_params_dict["lr"])
 
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.long).to(device)
@@ -104,7 +84,6 @@ def train_and_export_model():
         dummy_input,
         "model.onnx",
         export_params=True,
-        verbose=True,
         opset_version=17,
         input_names=["input"],
         output_names=["output"],

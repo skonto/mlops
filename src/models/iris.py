@@ -1,3 +1,5 @@
+from typing import cast
+
 import torch
 import torch.nn as nn
 
@@ -47,6 +49,6 @@ class IrisDL(nn.Module):
         model.eval()
 
         if compile_model:
-            model = torch.compile(model)
+            model = cast(IrisDL, torch.compile(model))
 
         return model

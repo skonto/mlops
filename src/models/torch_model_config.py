@@ -34,3 +34,23 @@ class ModelParams(BaseSettings):
 
     class Config:
         env_prefix = "MODEL_"
+
+
+class TrainModelParams(BaseSettings):
+    lr: float = 0.0073
+    model: ModelParams = ModelParams()
+
+    def to_model_dict(self) -> dict:
+        return {
+            "input_dim": self.model.input_dim,
+            "hidden_dims": self.model.hidden_dims,
+            "output_dim": self.model.output_dim,
+            "activation": self.model.activation,
+            "dropout": self.model.dropout,
+            "median": self.model.median,
+            "iqr": self.model.iqr,
+            "lr": self.lr,
+        }
+
+    class Config:
+        env_prefix = "TRAIN_MODEL_"
