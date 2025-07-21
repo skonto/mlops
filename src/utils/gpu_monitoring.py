@@ -1,14 +1,15 @@
 import os
 import threading
 import time
+
+from loguru import logger
 from pynvml import (
+    nvmlDeviceGetComputeRunningProcesses,
+    nvmlDeviceGetHandleByIndex,
+    nvmlDeviceGetMemoryInfo,
     nvmlInit,
     nvmlShutdown,
-    nvmlDeviceGetHandleByIndex,
-    nvmlDeviceGetComputeRunningProcesses,
-    nvmlDeviceGetMemoryInfo,
 )
-from loguru import logger
 
 stop_signal = threading.Event()
 monitor_thread = None

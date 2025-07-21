@@ -1,8 +1,10 @@
-import onnxruntime as ort
-import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 import asyncio
-from typing import List, Dict, Any
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Dict, List
+
+import numpy as np
+import onnxruntime as ort
+
 
 class ONNXInferenceEngine:
     def __init__(self, onnx_path: str, providers: List[str], num_threads: int = 4):

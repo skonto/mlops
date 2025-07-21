@@ -1,5 +1,7 @@
-from pydantic import BaseModel, field_validator
 from typing import List
+
+from pydantic import BaseModel, field_validator
+
 
 class BatchInput(BaseModel):
     features: List[List[float]]  # Batch of input samples

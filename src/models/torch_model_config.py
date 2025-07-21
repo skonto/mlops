@@ -1,6 +1,8 @@
-from pydantic_settings import BaseSettings
-from typing import Literal, List
+from typing import List, Literal
+
 import torch
+from pydantic_settings import BaseSettings
+
 
 class ModelParams(BaseSettings):
     input_dim: int = 4

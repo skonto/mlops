@@ -1,11 +1,13 @@
-import torch
-import numpy as np
-from typing import List, Dict
-from ts.torch_handler.base_handler import BaseHandler
 import json
+from typing import Dict, List
+
+import numpy as np
+import torch
+from ts.torch_handler.base_handler import BaseHandler
 
 from models.iris import IrisDL
 from models.torch_model_config import ModelParams
+
 
 class IrisHandler(BaseHandler):
     def __init__(self):

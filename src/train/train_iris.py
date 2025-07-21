@@ -1,12 +1,14 @@
+import random
+
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+
 from models import IrisDL
-import random
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

@@ -1,6 +1,7 @@
 from loguru import logger
 from pydantic_settings import BaseSettings
 
+
 def setup_logging(
     log_file: str = "app.log",
     level: str = "DEBUG",

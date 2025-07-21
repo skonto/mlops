@@ -1,6 +1,8 @@
-from pydantic_settings import BaseSettings
 from typing import Literal
+
 import onnxruntime as ort
+from pydantic_settings import BaseSettings
+
 
 class EngineParams(BaseSettings):
     device: Literal["cpu", "cuda"] = "cuda"

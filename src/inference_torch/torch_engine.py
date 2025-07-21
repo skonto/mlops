@@ -1,9 +1,11 @@
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Dict, List
+
+import numpy as np
 import torch
 from torch import nn
-from concurrent.futures import ThreadPoolExecutor
-import asyncio
-from typing import List, Dict, Any
-import numpy as np
+
 
 class TorchInferenceEngine:
     def __init__(self, model: nn.Module, device: torch.device, num_threads: int = 4):

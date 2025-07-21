@@ -1,9 +1,10 @@
 import numpy as np
-import torch
 import onnxruntime as ort
-from models import IrisDL
+import torch
 from sklearn.datasets import load_iris
 from sklearn.metrics import accuracy_score, confusion_matrix
+
+from models import IrisDL
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
