@@ -9,7 +9,7 @@ class EngineParams(BaseSettings):
     num_threads: int = 8
 
     @property
-    def providers(self): 
+    def providers(self):
         if self.device == "cuda":
             if "CUDAExecutionProvider" in ort.get_available_providers():
                 return ["CUDAExecutionProvider"]

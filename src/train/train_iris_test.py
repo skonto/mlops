@@ -8,6 +8,7 @@ from models import IrisDL
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 def load_trained_model(model_path="model.pt"):
     iris = load_iris()
     X, y = iris.data, iris.target
@@ -21,7 +22,7 @@ def load_trained_model(model_path="model.pt"):
         median=torch.tensor(median, dtype=torch.float32).to(device),
         iqr=torch.tensor(iqr, dtype=torch.float32).to(device),
         activation="relu",
-        dropout=0.1956
+        dropout=0.1956,
     ).to(device)
 
     model.load_state_dict(torch.load(model_path, map_location=device))
@@ -38,14 +39,16 @@ def test_onnx_export_consistency():
     # Run inference in PyTorch
     with torch.no_grad():
         torch_output = model(x_tensor).to(device)
-        
+
     use_cuda = torch.cuda.is_available()
     providers = ["CUDAExecutionProvider"] if use_cuda else ["CPUExecutionProvider"]
     ort_session = ort.InferenceSession("model.onnx", providers=providers)
     onnx_output = ort_session.run(None, {ort_session.get_inputs()[0].name: x_numpy})[0]
 
     # Assert the predictions are numerically close
-    assert np.allclose(torch_output.cpu().numpy(), onnx_output, rtol=1e-03, atol=1e-05), "ONNX output does not match PyTorch"
+    assert np.allclose(
+        torch_output.cpu().numpy(), onnx_output, rtol=1e-03, atol=1e-05
+    ), "ONNX output does not match PyTorch"
 
     # Optional: check predicted class
     torch_pred = torch.argmax(torch_output, dim=1).item()

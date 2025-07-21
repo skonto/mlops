@@ -27,10 +27,8 @@ jobs:
       - name: Sync all dependencies (including dev)
         run: uv sync --dev --extra torch --extra onnx
 
-      - name: Lint with Ruff (GitHub annotations)
+      - name: Lint with Ruff
         uses: astral-sh/ruff-action@v3
-        with:
-          src: "./src ./app"
 
       - name: Check formatting with Black
         run: uv run black --check src/

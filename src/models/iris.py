@@ -16,8 +16,8 @@ class IrisDL(nn.Module):
         super().__init__()
 
         # Store median and IQR as tensors (for ONNX compatibility)
-        self.register_buffer("median", median )
-        self.register_buffer("iqr",iqr)
+        self.register_buffer("median", median)
+        self.register_buffer("iqr", iqr)
         layers = []
         act_fn = nn.ReLU() if activation == "relu" else nn.GELU()
 
@@ -37,7 +37,9 @@ class IrisDL(nn.Module):
         return self.net(x)
 
     @classmethod
-    def from_checkpoint(cls, path: str, config: dict, device: torch.device, compile_model: bool = False):
+    def from_checkpoint(
+        cls, path: str, config: dict, device: torch.device, compile_model: bool = False
+    ):
         model = cls(**config)
         state_dict = torch.load(path, map_location=device)
         model.load_state_dict(state_dict)

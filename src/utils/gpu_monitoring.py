@@ -14,9 +14,12 @@ from pynvml import (
 stop_signal = threading.Event()
 monitor_thread = None
 
+
 def report_actual_gpu_memory(device):
     if device.type != "cuda":
-        logger.info("[report_actual_gpu_memory] Device is CPU. Skipping GPU memory report.")
+        logger.info(
+            "[report_actual_gpu_memory] Device is CPU. Skipping GPU memory report."
+        )
         return
 
     device_index = device.index if device.index is not None else 0
@@ -35,6 +38,8 @@ def report_actual_gpu_memory(device):
             nvmlShutdown()
         except:
             pass
+
+
 def gpu_monitor_loop(device, interval: float = 5.0):
     if device.type != "cuda":
         logger.info("[GPU Monitor] Device is CPU. Skipping GPU monitoring.")
@@ -60,6 +65,7 @@ def gpu_monitor_loop(device, interval: float = 5.0):
                 pass
         time.sleep(interval)
 
+
 def start_gpu_monitor(device, interval: float = 5.0):
     global monitor_thread
 
@@ -81,6 +87,7 @@ def start_gpu_monitor(device, interval: float = 5.0):
         target=gpu_monitor_loop, args=(device, interval, 0), daemon=True
     )
     monitor_thread.start()
+
 
 def stop_gpu_monitor():
     global monitor_thread

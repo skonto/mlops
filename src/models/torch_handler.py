@@ -41,7 +41,9 @@ class IrisHandler(BaseHandler):
                     raw = json.loads(raw)
                 except json.JSONDecodeError:
                     raise ValueError("Invalid JSON string in request body.")
-            if not isinstance(raw, list) or not all(isinstance(inner, list) for inner in raw):
+            if not isinstance(raw, list) or not all(
+                isinstance(inner, list) for inner in raw
+            ):
                 raise ValueError("Input must be a list of lists of floats.")
             inputs.extend(raw)
 

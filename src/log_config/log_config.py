@@ -8,7 +8,7 @@ def setup_logging(
     rotation: str = "10 MB",
     retention: str = "7 days",
     backtrace: bool = True,
-    diagnose: bool = True
+    diagnose: bool = True,
 ):
     logger.remove()
     logger.add(
@@ -20,6 +20,7 @@ def setup_logging(
         level=level,
     )
     logger.debug("Logging is configured.")
+
 
 class LoggingParams(BaseSettings):
     level: str = "DEBUG"

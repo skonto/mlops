@@ -13,17 +13,18 @@ from models import IrisDL
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 best_params = {
-    'n_layers': 4,
-    'hidden_dim_0': 16,
-    'hidden_dim_1': 128,
-    'hidden_dim_2': 32,
-    'hidden_dim_3': 64,
-    'activation': 'relu',
-    'dropout': 0.1956,
-    'lr': 0.0073
+    "n_layers": 4,
+    "hidden_dim_0": 16,
+    "hidden_dim_1": 128,
+    "hidden_dim_2": 32,
+    "hidden_dim_3": 64,
+    "activation": "relu",
+    "dropout": 0.1956,
+    "lr": 0.0073,
 }
 
 hidden_dims = [best_params[f"hidden_dim_{i}"] for i in range(best_params["n_layers"])]
+
 
 def set_seed(seed=42):
     random.seed(seed)
@@ -35,7 +36,8 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def train(seed = 100, train_size = 0.8, num_epochs = 1000):
+
+def train(seed=100, train_size=0.8, num_epochs=1000):
     set_seed(seed)
     iris = load_iris()
     X, y = iris.data, iris.target
@@ -51,11 +53,11 @@ def train(seed = 100, train_size = 0.8, num_epochs = 1000):
         median=torch.tensor(median, dtype=torch.float32),
         iqr=torch.tensor(iqr, dtype=torch.float32),
         activation=best_params["activation"],
-        dropout=best_params["dropout"]
+        dropout=best_params["dropout"],
     ).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=best_params['lr'])
+    optimizer = torch.optim.Adam(model.parameters(), lr=best_params["lr"])
 
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.long).to(device)
@@ -79,7 +81,7 @@ def train(seed = 100, train_size = 0.8, num_epochs = 1000):
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.savefig("loss_plot.png")
-    
+
     model.eval()
     X_test_tensor = torch.tensor(X_test, dtype=torch.float32).to(device)
     y_pred_test = model(X_test_tensor)
@@ -89,6 +91,7 @@ def train(seed = 100, train_size = 0.8, num_epochs = 1000):
     print("Confusion Matrix:\n", confusion_matrix(preds, y_test))
     return model, X, y
 
+
 def train_and_export_model():
     model, X, y = train()
     model.eval()
@@ -97,7 +100,9 @@ def train_and_export_model():
     model.eval()
     dummy_input = torch.randn(1, 4).to(device)
     torch.onnx.export(
-        model, dummy_input, "model.onnx",
+        model,
+        dummy_input,
+        "model.onnx",
         export_params=True,
         verbose=True,
         opset_version=17,

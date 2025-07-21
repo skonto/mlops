@@ -11,5 +11,7 @@ class BatchInput(BaseModel):
     def validate_shape(cls, features):
         for i, sample in enumerate(features):
             if len(sample) != 4:
-                raise ValueError(f"Sample at index {i} must have exactly 4 features. Sample: {sample}")
+                raise ValueError(
+                    f"Sample at index {i} must have exactly 4 features. Sample: {sample}"
+                )
         return features
