@@ -1,6 +1,8 @@
 from pydantic_settings import BaseSettings
-from log_config import LoggingParams
+
 from inference_onnx import EngineParams
+from log_config import LoggingParams
+
 
 class AppConfig(BaseSettings):
     engine: EngineParams = EngineParams()

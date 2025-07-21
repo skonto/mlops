@@ -1,11 +1,14 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
+from loguru import logger
+from pynvml import *
+
+import app.onnx.app_config as app_config
 from data import BatchInput
 from inference_onnx import ONNXInferenceEngine
-from contextlib import asynccontextmanager
-from pynvml import *
-from loguru import logger
 from log_config import setup_logging
-import app.onnx.app_config as app_config
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

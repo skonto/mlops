@@ -1,8 +1,10 @@
-from pydantic_settings import BaseSettings
 from loguru import logger
-from log_config import LoggingParams
+from pydantic_settings import BaseSettings
+
 from inference_torch import EngineParams
+from log_config import LoggingParams
 from models import ModelParams
+
 
 class AppConfig(BaseSettings):
     model: ModelParams = ModelParams()

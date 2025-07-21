@@ -1,15 +1,17 @@
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
+
 import torch
-from models import IrisDL
+from fastapi import Depends, FastAPI, HTTPException, Request
+from loguru import logger
+from pynvml import *
+
+import app.torch.app_config as app_config
 from data import BatchInput
 from inference_torch import TorchInferenceEngine
-from contextlib import asynccontextmanager
-from pynvml import *
-from fastapi import FastAPI, Depends, HTTPException, Request
-from utils import start_gpu_monitor, stop_gpu_monitor, report_actual_gpu_memory
-from loguru import logger
-import app.torch.app_config as app_config
 from log_config import setup_logging
+from models import IrisDL
+from utils import report_actual_gpu_memory, start_gpu_monitor, stop_gpu_monitor
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

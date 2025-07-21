@@ -1,7 +1,8 @@
-import requests
 import json
 import time
+
 import numpy as np
+import requests
 
 TRITON_URL = "http://localhost:8000/v2/models/iris/infer"
 NUM_REQUESTS = 1000

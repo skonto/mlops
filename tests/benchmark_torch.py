@@ -1,6 +1,7 @@
 import time
-import requests
+
 import numpy as np
+import requests
 
 URL = "http://localhost:8000/predict"  # adjust if different
 NUM_REQUESTS = 1000

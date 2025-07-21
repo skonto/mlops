@@ -1,6 +1,8 @@
+import os
+
 import onnx
 from onnx import shape_inference
-import os
+
 
 def inspect_onnx_batch_dim(model_path: str):
     if not os.path.exists(model_path):
