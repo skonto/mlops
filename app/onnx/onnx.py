@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from typing import Optional
 
 from fastapi import FastAPI
 from loguru import logger
@@ -9,6 +10,7 @@ from data import BatchInput
 from inference_onnx import ONNXInferenceEngine
 from log_config import setup_logging
 
+engine: Optional[ONNXInferenceEngine] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,6 +25,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/predict")
 async def predict(data: BatchInput):
+    assert engine is not None
     return await engine.predict_async(data.features)
 
 @app.get("/healthz")

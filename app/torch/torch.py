@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from typing import Optional
 
 import torch
 from fastapi import Depends, FastAPI, HTTPException, Request
@@ -12,6 +13,8 @@ from log_config import setup_logging
 from models import IrisDL
 from utils import report_actual_gpu_memory, start_gpu_monitor, stop_gpu_monitor
 
+engine: Optional[TorchInferenceEngine] = None
+device: Optional[torch.device] = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,6 +36,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/predict")
 async def predict(data: BatchInput):
+    assert engine is not None
     return await engine.predict_async(data.features)
 
 @app.get("/healthz")
@@ -46,9 +50,10 @@ def readiness_check():
     return {"ready": False}
 
 def require_localhost(request: Request) -> Request:
-    client_host = request.client.host
-    if client_host not in ("127.0.0.1", "::1"):
-        raise HTTPException(status_code=403, detail=f"Access denied: not localhost ({client_host})")
+    if request.client is not None:
+        client_host = request.client.host
+        if client_host not in ("127.0.0.1", "::1"):
+            raise HTTPException(status_code=403, detail=f"Access denied: not localhost ({client_host})")
     return request
 
 @app.get("/debug/gpu", include_in_schema=False, dependencies=[Depends(require_localhost)])

@@ -27,14 +27,8 @@ jobs:
       - name: Sync all dependencies (including dev)
         run: uv sync --dev --extra torch --extra onnx
 
-      - name: Lint with Ruff
-        run: uv run ruff check src/
-
-      - name: Check formatting with Black
-        run: uv run black --check src/
-
-      - name: Type check with MyPy
-        run: uv run mypy src/
+      - name: validate
+        run: make install-dev validate
 
       - name: Run training script
         run: uv run python src/train/train_iris.py
